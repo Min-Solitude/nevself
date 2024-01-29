@@ -1,0 +1,1 @@
+export const regexUsername = /^[a-zA-Z0-9]+$/;
