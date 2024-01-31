@@ -18,6 +18,8 @@ export type User = {
     banner?: string;
     tags?: HagTag[];
     introduction?: string;
+    likes?: string[];
+    kindProfile?: string | null;
 }
 
 export type HagTag = {

@@ -1,7 +1,11 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
-import { updateAvatarAccount } from "@/store/reducer/auth/auth.reducer";
+import {
+  likeProfileAccount,
+  removeLikeProfileAccount,
+  updateAvatarAccount,
+} from "@/store/reducer/auth/auth.reducer";
 import IonIcon from "@reacticons/ionicons";
 import Image from "next/image";
 import React from "react";
@@ -25,23 +29,6 @@ export default function Profile() {
         <UpdateInfo account={profile} close={() => setIsUpdateInfo(false)} />
       )}
       <div className=" -translate-y-[4rem] md:-translate-y-[6rem]  flex flex-col items-center relative gap-2">
-        <div className="absolute left-0 top-[5rem] items-center flex gap-2">
-          {account?.uid === profile?.uid && (
-            <Button
-              className="text-sm font-medium px-4"
-              kind="primary"
-              onClick={() => setIsUpdateInfo(true)}
-            >
-              Chỉnh sửa
-            </Button>
-          )}
-          <Button className="text-sm font-medium w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary bg-red-500 text-white">
-            <IonIcon name="heart" className="text-base" />
-          </Button>
-          <span className="flex justify-center items-center w-[2.2rem] text-sm font-bold text-red-500 h-[2.2rem] rounded-xl border border-gray-200">
-            10
-          </span>
-        </div>
         <div className="  w-[6rem] h-[6rem] relative md:w-[7rem] md:h-[7rem] shadow-primary border-2  border-white  z-10 rounded-full">
           <input
             type="file"
@@ -116,6 +103,47 @@ export default function Profile() {
               </i>
             </div>
           )}
+        </div>
+        <div className="md:absolute mt-6 md:mt-0 left-0 top-[5rem] items-center flex gap-2">
+          {account?.uid === profile?.uid && (
+            <Button
+              className="text-sm font-medium px-4"
+              kind="primary"
+              onClick={() => setIsUpdateInfo(true)}
+            >
+              Chỉnh sửa
+            </Button>
+          )}
+          <Button
+            className={`text-sm font-medium border border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary  ${
+              profile?.likes?.find((item) => item === account?.uid)
+                ? "bg-red-500 text-white"
+                : "bg-white text-red-500"
+            }`}
+            onClick={() => {
+              const payload = {
+                uid_like: account?.uid,
+                uid_profile: profile?.uid,
+              };
+
+              if (account?.uid && profile?.uid) {
+                if (profile?.likes?.find((item) => item === account?.uid)) {
+                  dispatch(removeLikeProfileAccount(payload));
+                } else {
+                  dispatch(likeProfileAccount(payload));
+                }
+              }
+            }}
+          >
+            {profile?.likes?.find((item) => item === account?.uid) ? (
+              <IonIcon name="heart" className="text-base" />
+            ) : (
+              <IonIcon name="heart-outline" className="text-base" />
+            )}
+          </Button>
+          <span className="flex justify-center items-center w-[2.2rem] text-sm font-bold text-red-500 h-[2.2rem] rounded-xl border border-gray-200">
+            {profile?.likes?.length}
+          </span>
         </div>
       </div>
     </>

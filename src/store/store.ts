@@ -13,9 +13,11 @@ import {
 import autoMergeLevel2 from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import storage from 'redux-persist/lib/storage';
 import { AuthReducer } from './reducer/auth/auth.reducer';
+import { ProductReducer } from './reducer/product/product.reducer';
 
 const rootReducer = combineReducers({
     auth: AuthReducer,
+    product: ProductReducer,
 });
 
 type RootState = ReturnType<typeof rootReducer>;

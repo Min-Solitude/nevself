@@ -27,6 +27,10 @@ export default function Button({
 }: ButtonProps) {
   let kindClass = "";
 
+  if (kind === "danger") {
+    kindClass = "bg-red-500 text-white p-2 rounded-xl";
+  }
+
   if (kind === "primary")
     kindClass =
       "bg-white shadow-primary border text-black border-gray-200 p-2 rounded-xl";

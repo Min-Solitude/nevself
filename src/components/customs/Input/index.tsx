@@ -5,7 +5,7 @@ type Props = Readonly<{
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   id: string;
   name: string;
-  type?: "text" | "password" | "email" | "number";
+  type?: "text" | "password" | "email" | "number" | "url";
   placeholder?: string;
   className?: string;
   required?: boolean;

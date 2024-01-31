@@ -5,7 +5,7 @@ import { signInWithPopup } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { AuthState, HagTag } from './auth.type';
 import { deleteCookie, setCookie } from 'cookies-next';
-import { updateAvatar, updateBanner, updateInfo } from '@/configs/firebase/account';
+import { createProfile, likeProfile, unlikeProfile, updateAvatar, updateBanner, updateInfo } from '@/configs/firebase/account';
 
 const initialState: AuthState = {
     account: null,
@@ -93,6 +93,31 @@ export const getProfileAccount = createAsyncThunk(
     }
 )
 
+export const likeProfileAccount = createAsyncThunk(
+    'auth/likeProfileAccount',
+    async (payload: { uid_like?: string; uid_profile?: string }) => {
+        const likeProfileResult = await likeProfile(payload.uid_like, payload.uid_profile);
+        
+        return {
+            uid_like: payload.uid_like,
+            result: likeProfileResult?.result,
+        };
+    }
+)
+
+export const removeLikeProfileAccount = createAsyncThunk(
+    'auth/removeLikeProfileAccount',
+    async (payload: { uid_like?: string; uid_profile?: string }) => {
+        const likeProfileResult = await unlikeProfile(payload.uid_like, payload.uid_profile);
+
+        return {
+            uid_like: payload.uid_like,
+            result: likeProfileResult?.result,
+        };
+
+    }
+)
+
 export const updateAvatarAccount = createAsyncThunk(
     'auth/updateAvatarAccount',
     async (payload: {
@@ -125,6 +150,20 @@ export const updateInfoAccount = createAsyncThunk(
         
 
         return updateInfoResult?.result;
+    })
+
+export const createProfileAccount = createAsyncThunk(
+    'auth/createProfileAccount',
+    async (payload : {
+        uid: string | undefined;
+        kindProfile: string | null;
+    }) => {
+        const createProfileResult = await createProfile(payload.uid, payload.kindProfile);        
+
+        return {
+            result: createProfileResult?.result,
+            kindProfile: payload.kindProfile,
+        }
     })
 
 const reducer = createSlice({
@@ -252,6 +291,67 @@ const reducer = createSlice({
                 }
         });
         builder.addCase(updateInfoAccount.pending, (state) => {
+            state.loading = true;
+        }
+        );
+
+        builder.addCase(likeProfileAccount.rejected, (state) => {
+            state.loading = false;
+            toast.error('Thích thất bại');
+        });
+        builder.addCase(likeProfileAccount.fulfilled, (state, action : any) => {
+            state.loading = false;
+            if(state.profile) {
+                // push uid_like to likes
+                if(action.payload.result) {
+                    state.profile.likes?.push(action.payload.uid_like);
+                }
+            } else{
+                toast.error('Thích thất bại');
+            }
+        });
+        builder.addCase(likeProfileAccount.pending, (state) => {
+            state.loading = true;
+        }
+        );
+
+        builder.addCase(removeLikeProfileAccount.rejected, (state) => {
+            state.loading = false;
+            toast.error('Bỏ thích thất bại');
+        });
+        builder.addCase(removeLikeProfileAccount.fulfilled, (state, action : any) => {
+            state.loading = false;
+            if(state.profile) {
+                // remove uid_like to likes
+                if(action.payload.result) {
+                    state.profile.likes = state.profile.likes?.filter((item) => item !== action.payload.uid_like);
+                }
+            } else{
+                toast.error('Bỏ thích thất bại');
+            }
+        });
+        builder.addCase(removeLikeProfileAccount.pending, (state) => {
+            state.loading = true;
+        }
+        );
+
+        builder.addCase(createProfileAccount.rejected, (state) => {
+            state.loading = false;
+            toast.error('Tạo profile thất bại');
+        });
+        builder.addCase(createProfileAccount.fulfilled, (state, action : any) => {
+            state.loading = false;
+            if(action.payload.result){
+                if(state.account && state.profile) {
+                    state.account.kindProfile = action.payload.kindProfile;
+                    state.profile.kindProfile = action.payload.kindProfile;
+                    toast.success('Tạo profile thành công');
+                }
+            }else{
+                toast.error('Tạo profile thất bại');
+            }
+        });
+        builder.addCase(createProfileAccount.pending, (state) => {
             state.loading = true;
         }
         );

@@ -108,3 +108,85 @@ export async function updateInfo(info: any, uid: any) {
 
   return { result, error };
 }
+
+export async function likeProfile(uid_likes: any, uid_profile: any) {
+  let result = null;
+  let error = null;
+
+  try {
+    const userDocRef = doc(db, "users", uid_profile);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      // add uid_likes to likes
+      const likes = docSnap.data()?.likes;
+
+      if (likes) {
+        await updateDoc(userDocRef, {
+          likes: [...likes, uid_likes],
+        });
+      } else {
+        await updateDoc(userDocRef, {
+          likes: [uid_likes],
+        });
+      }
+
+      result = true;
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+export async function unlikeProfile(uid_likes: any, uid_profile: any) {
+  let result = null;
+  let error = null;
+
+  try {
+    const userDocRef = doc(db, "users", uid_profile);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      // remove uid_likes from likes
+      const likes = docSnap.data()?.likes;
+
+      if (likes) {
+        const newLikes = likes.filter((item: any) => item !== uid_likes);
+
+        await updateDoc(userDocRef, {
+          likes: newLikes,
+        });
+      }
+
+      result = true;
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+export async function createProfile(uid: any, kindProfile: any) {
+  let result = null;
+  let error = null;
+
+  try {
+    const userDocRef = doc(db, "users", uid);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      await updateDoc(userDocRef, {
+        kindProfile: kindProfile,
+      });
+
+      result = true;
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}

@@ -4,6 +4,7 @@ import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContextProvider } from "@/contexts/AuthContext";
 import { ReduxProviders } from "@/contexts/ReduxContext";
+import CheckTurnOnConsole from "@/components/shared/checkTurnOnConsole";
 
 export const metadata: Metadata = {
   title: "Nevself | Dành riêng cho chính bạn",
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body className="font-sans text-black">
         <ReduxProviders>
           <AuthContextProvider>
+            {/* <CheckTurnOnConsole /> */}
             <main className="min-h-screen w-full flex flex-col items-center">
               {children}
             </main>
