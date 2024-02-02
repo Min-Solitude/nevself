@@ -28,15 +28,22 @@ export default function DonatePage({
   }, []);
 
   return (
-    <WhileInView className="w-full rounded-2xl border border-gray-200 shadow-primary flex justify-center items-center p-4 min-h-[30vh]">
+    <WhileInView
+      className={`w-full rounded-2xl border border-gray-200 shadow-primary flex justify-center ${
+        isCreateDonate ? "items-start" : "items-center"
+      } p-4 min-h-[30vh]`}
+    >
       {isCreateDonate ? (
-        <CreateDonate />
+        <CreateDonate
+          close={() => setIsCreateDonate(false)}
+          uid_profile={params.uid}
+        />
       ) : account?.uid === params.uid ? (
         <div>
           {profile?.role === "admin" || profile?.role === "vip" ? (
             <div>
               {profile.donate ? (
-                <div>Donate của người dùng này</div>
+                <div>Show Donate</div>
               ) : (
                 <div className="w-full flex gap-2 flex-col px-3 md:px-0 items-center">
                   <Button
@@ -60,7 +67,7 @@ export default function DonatePage({
       ) : (
         <div>
           {profile?.role === "admin" || profile?.role === "vip" ? (
-            <div>Người dùng này là người dùng doanh nghiệp</div>
+            <div>Show donate de nta donate</div>
           ) : (
             <div>
               <div>Người dùng này không phải là người dùng doanh nghiệp</div>

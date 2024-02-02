@@ -5,7 +5,7 @@ import {
   uploadBytes,
 } from "firebase/storage";
 import { db, storages } from "..";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
 export async function updateBanner(banner: any, uid: any) {
   let result = null;
@@ -273,6 +273,41 @@ export async function deleteNotification(uid: any) {
       });
 
       result = true;
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+export async function createDonate(uid_profile: any, title: string,description: string, imageQr: any) {
+  let result = null;
+  let error = null;
+
+  try {
+    const storageRef = ref(storages, `donate/${uid_profile}/${imageQr.name}`);
+    await uploadBytes(storageRef, imageQr, {});
+    const downloadURL = await getDownloadURL(storageRef);
+
+    const userDocRef = doc(db, "users", uid_profile);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+
+      const createdAt = new Date().getTime();
+      
+      await updateDoc(userDocRef, {
+        donate: {title: title, description: description, imageQr: downloadURL, status: "active", createdAt: createdAt},
+      })
+
+      result = {
+        title: title,
+        description: description,
+        imageQr: downloadURL,
+        status: "active",
+        createdAt: createdAt
+      };
     }
   } catch (e) {
     error = e;

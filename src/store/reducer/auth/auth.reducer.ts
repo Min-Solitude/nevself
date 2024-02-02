@@ -5,7 +5,7 @@ import { signInWithPopup } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { AuthState, HagTag } from './auth.type';
 import { deleteCookie, setCookie } from 'cookies-next';
-import { createProfile, deleteNotification, getNotification, likeProfile, unlikeProfile, updateAvatar, updateBanner, updateInfo } from '@/configs/firebase/account';
+import { createDonate, createProfile, deleteNotification, getNotification, likeProfile, unlikeProfile, updateAvatar, updateBanner, updateInfo } from '@/configs/firebase/account';
 import { ProductAction } from '../product/product.reducer';
 
 const initialState: AuthState = {
@@ -186,6 +186,19 @@ export const getAllNoticeAccount = createAsyncThunk(
             
             return deleteResult?.result;
         })
+
+        export const createDonateProfile = createAsyncThunk(
+            'auth/createDonateProfile',
+            async (payload : {
+                uid_profile: any;
+                title: any ;
+                description: any ;
+                imageQr: any
+            }) => {
+                const createDonateProfileResult = await createDonate(payload.uid_profile, payload.title, payload.description, payload.imageQr);      
+    
+                return createDonateProfileResult.result
+            })
 
 
 const reducer = createSlice({
@@ -405,6 +418,21 @@ const reducer = createSlice({
             }
         });
         builder.addCase(deleteNoticeAccount.pending, (state) => {
+            state.loading = true;
+        }
+        );
+
+        builder.addCase(createDonateProfile.rejected, (state) => {
+            state.loading = false;
+        });
+        builder.addCase(createDonateProfile.fulfilled, (state, action : any) => {
+            state.loading = false;
+            if(state.profile && state.account) {    
+                toast.success('Tạo donate thành công');
+                state.profile.donate = action.payload;          
+            }
+        });
+        builder.addCase(createDonateProfile.pending, (state) => {
             state.loading = true;
         }
         );

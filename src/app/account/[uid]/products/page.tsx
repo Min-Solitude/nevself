@@ -84,7 +84,7 @@ export default function AccountProductPage() {
             ) : (
               <div className="w-full mt-4 md:mt-8">
                 {loading ? (
-                  <div className="w-full grid grid-cols-1 2xl:grid-cols-4 md:grid-cols-3 gap-4">
+                  <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-8 gap-4">
                     {
                       <Each
                         of={[1, 2, 3, 4, 5]}
