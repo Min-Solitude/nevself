@@ -1,5 +1,6 @@
 "use client";
 
+import { IMAGES } from "@/assets/imgs";
 import View from "@/components/motions/View";
 import { Each } from "@/helper/Each";
 import { useAppDispatch } from "@/hooks/useRedux";
@@ -30,7 +31,7 @@ export default function Account(props: Props) {
     <div className="flex gap-2 items-center relative md:border-l md:border-gray-300 md:pl-6">
       {isShowMenu && (
         <View
-          className="absolute right-0 top-full flex flex-col gap-2 translate-y-[10%] text-black bg-white border border-gray-100 w-[140%] px-2 py-2 rounded-2xl text-sm shadow-primary"
+          className="absolute right-[-3.5rem] md:right-0 top-full flex flex-col gap-2 translate-y-[10%] text-black bg-white border border-gray-100 w-[200%] px-2 py-2 rounded-xl text-sm shadow-primary"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 18 }}
           transition={{ duration: 0.3 }}
@@ -78,11 +79,7 @@ export default function Account(props: Props) {
         onClick={() => setIsShowMenu(!isShowMenu)}
       >
         <Image
-          src={
-            props?.account?.avatar
-              ? props?.account?.avatar
-              : "https://i.pinimg.com/736x/c0/6f/ec/c06fec230b5353ac9c211229fb2d01a0.jpg"
-          }
+          src={props?.account?.avatar ? props?.account?.avatar : IMAGES.avatar}
           width={64}
           height={64}
           alt={props?.account?.username ? props?.account?.username : ""}

@@ -20,8 +20,24 @@ export type User = {
     introduction?: string;
     likes?: string[];
     kindProfile?: string | null;
+    notifications?: Notification[];
+    donate?: Donate;
 }
 
 export type HagTag = {
     name: string;
+}
+
+export type Notification = {
+    uid: string;
+    time: string;
+    displayName: string;
+    avatar: string;
+    content: string;
+}
+
+export type Donate = {
+    title: string;
+    QrCode: string;
+    description: string;
 }

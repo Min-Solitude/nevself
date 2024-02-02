@@ -10,6 +10,11 @@ import { useEffect, useState } from "react";
 import CreateProduct from "./CreateProduct";
 import Loading from "@/components/shared/Loading";
 import { getProducts } from "@/store/reducer/product/product.reducer";
+import { Each } from "@/helper/Each";
+import ItemProduct from "@/components/customs/ItemProduct";
+import Skeleton from "@/components/shared/Skeleton";
+import { Product } from "@/store/reducer/product/product.type";
+import UpdateProduct from "./UpdateProduct";
 
 export default function AccountProductPage() {
   const profile = useAppSelector((state) => state.auth.profile);
@@ -22,6 +27,8 @@ export default function AccountProductPage() {
 
   const [isShowPopup, setIsShowPopup] = useState(false);
   const [isCreateProduct, setIsCreateProduct] = useState(false);
+
+  const [isUpdateProduct, setIsUpdateProduct] = useState<Product | null>(null);
 
   const handleCreateProfile = (e: any) => {
     e.preventDefault();
@@ -40,13 +47,21 @@ export default function AccountProductPage() {
     if (profile?.kindProfile) {
       dispatch(getProducts({ uid: profile?.uid }));
     }
-  }, []);
+  }, [profile?.uid, profile?.kindProfile]);
 
-  console.log(products);
+  if (isUpdateProduct) {
+    return (
+      <UpdateProduct
+        product={isUpdateProduct}
+        uid_account={account?.uid ? account?.uid : ""}
+        close={() => setIsUpdateProduct(null)}
+      />
+    );
+  }
 
   return (
     <>
-      {loading && <Loading kind="load-page" />}
+      {loading && <Loading kind="load-action" />}
       <WhileInView className="w-full flex justify-center items-center">
         {profile?.kindProfile ? (
           <div className="w-full">
@@ -57,7 +72,7 @@ export default function AccountProductPage() {
                   kind={isCreateProduct ? "danger" : "primary"}
                   onClick={() => setIsCreateProduct(!isCreateProduct)}
                 >
-                  {isCreateProduct ? "Hủy" : "Tạo sản phẩm"}
+                  {isCreateProduct ? "Hủy" : "Đăng sản phẩm"}
                 </Button>
               </div>
             )}
@@ -67,7 +82,45 @@ export default function AccountProductPage() {
                 close={() => setIsCreateProduct(false)}
               />
             ) : (
-              <div>1</div>
+              <div className="w-full mt-4 md:mt-8">
+                {loading ? (
+                  <div className="w-full grid grid-cols-1 2xl:grid-cols-4 md:grid-cols-3 gap-4">
+                    {
+                      <Each
+                        of={[1, 2, 3, 4, 5]}
+                        render={(_, index) => <Skeleton kind="load-item" />}
+                      />
+                    }
+                  </div>
+                ) : products ? (
+                  <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-8 gap-4">
+                    <Each
+                      of={products}
+                      render={(item, index) => (
+                        <ItemProduct
+                          createdAt={item.createdAt}
+                          description={item.description}
+                          image={item.image}
+                          key={index}
+                          link={item.link}
+                          name={item.name}
+                          status={item.status}
+                          uid_creator={item.uid_creator}
+                          delay={index * 0.1}
+                          uid_account={account?.uid}
+                          uuid_product={item.uuid}
+                          handleUpdateProduct={() => {
+                            setIsUpdateProduct(item);
+                          }}
+                          likes={item.likes}
+                        />
+                      )}
+                    />
+                  </div>
+                ) : (
+                  <div>Chưa có sản phẩm nào</div>
+                )}
+              </div>
             )}
           </div>
         ) : account?.uid === profile?.uid ? (

@@ -5,7 +5,8 @@ import { signInWithPopup } from 'firebase/auth';
 import { toast } from 'react-toastify';
 import { AuthState, HagTag } from './auth.type';
 import { deleteCookie, setCookie } from 'cookies-next';
-import { createProfile, likeProfile, unlikeProfile, updateAvatar, updateBanner, updateInfo } from '@/configs/firebase/account';
+import { createProfile, deleteNotification, getNotification, likeProfile, unlikeProfile, updateAvatar, updateBanner, updateInfo } from '@/configs/firebase/account';
+import { ProductAction } from '../product/product.reducer';
 
 const initialState: AuthState = {
     account: null,
@@ -166,6 +167,27 @@ export const createProfileAccount = createAsyncThunk(
         }
     })
 
+export const getAllNoticeAccount = createAsyncThunk(
+    'auth/getAllNoticeAccount',
+    async (payload : {
+        uid: string | undefined;
+    }) => {
+        const getResult = await getNotification(payload.uid);        
+
+        return getResult?.result?.reverse();
+    })
+
+    export const deleteNoticeAccount = createAsyncThunk(
+        'auth/deleteNoticeAccount',
+        async (payload : {
+            uid: string | undefined;
+        }) => {
+            const deleteResult = await deleteNotification(payload.uid);        
+            
+            return deleteResult?.result;
+        })
+
+
 const reducer = createSlice({
     name: 'auth',
     initialState,
@@ -173,6 +195,7 @@ const reducer = createSlice({
         logout: (state) => {
             state.account = null;
             deleteCookie('access_token');
+            ProductAction.logout();
         }
     },
     extraReducers: (builder) => {
@@ -352,6 +375,36 @@ const reducer = createSlice({
             }
         });
         builder.addCase(createProfileAccount.pending, (state) => {
+            state.loading = true;
+        }
+        );
+
+        builder.addCase(getAllNoticeAccount.rejected, (state) => {
+            state.loading = false;
+        });
+        builder.addCase(getAllNoticeAccount.fulfilled, (state, action : any) => {
+            state.loading = false;
+            if(state.profile && state.account) {                
+                state.profile.notifications = action.payload;
+                state.account.notifications = action.payload;
+            }
+        });
+        builder.addCase(getAllNoticeAccount.pending, (state) => {
+            state.loading = true;
+        }
+        );
+
+        builder.addCase(deleteNoticeAccount.rejected, (state) => {
+            state.loading = false;
+        });
+        builder.addCase(deleteNoticeAccount.fulfilled, (state, action : any) => {
+            state.loading = false;
+            if(state.profile && state.account) {    
+                state.profile.notifications = [];
+                state.account.notifications = [];            
+            }
+        });
+        builder.addCase(deleteNoticeAccount.pending, (state) => {
             state.loading = true;
         }
         );

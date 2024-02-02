@@ -36,8 +36,6 @@ export default function Navlink() {
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => state.auth.account);
 
-  console.log(account);
-
   return (
     <nav className=" flex items-center gap-4 md:gap-8 justify-end">
       <ul className="hidden md:flex items-center gap-8">

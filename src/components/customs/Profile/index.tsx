@@ -12,12 +12,15 @@ import React from "react";
 import Button from "../Button";
 import UpdateInfo from "./UpdateInfo";
 import { Each } from "@/helper/Each";
+import Notification from "./Notification";
+import { IMAGES } from "@/assets/imgs";
 
 export default function Profile() {
   const account = useAppSelector((state) => state.auth.account);
   const profile = useAppSelector((state) => state.auth.profile);
 
   const [isUpdateInfo, setIsUpdateInfo] = React.useState(false);
+  const [isShowNotification, setIsShowNotification] = React.useState(false);
 
   const [isAvatarUrl, setIsAvatarUrl] = React.useState<any>(null);
 
@@ -27,6 +30,13 @@ export default function Profile() {
     <>
       {isUpdateInfo && (
         <UpdateInfo account={profile} close={() => setIsUpdateInfo(false)} />
+      )}
+      {account?.uid && profile && isShowNotification && (
+        <Notification
+          uid_account={account?.uid}
+          profile={profile}
+          close={() => setIsShowNotification(false)}
+        />
       )}
       <div className=" -translate-y-[4rem] md:-translate-y-[6rem]  flex flex-col items-center relative gap-2">
         <div className="  w-[6rem] h-[6rem] relative md:w-[7rem] md:h-[7rem] shadow-primary border-2  border-white  z-10 rounded-full">
@@ -48,7 +58,7 @@ export default function Profile() {
                 ? URL.createObjectURL(isAvatarUrl)
                 : profile?.avatar
                 ? profile?.avatar
-                : "https://i.pinimg.com/564x/f3/d0/3f/f3d03ff730326a926517599edcccb3a0.jpg"
+                : IMAGES.avatar
             }
             className="w-full h-full object-cover rounded-full"
             width={500}
@@ -114,6 +124,14 @@ export default function Profile() {
               Chỉnh sửa
             </Button>
           )}
+          {account?.uid === profile?.uid && (
+            <Button
+              className="text-sm font-medium border border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary "
+              onClick={() => setIsShowNotification(true)}
+            >
+              <IonIcon name="notifications" className="text-base " />
+            </Button>
+          )}
           <Button
             className={`text-sm font-medium border border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary  ${
               profile?.likes?.find((item) => item === account?.uid)
@@ -141,8 +159,8 @@ export default function Profile() {
               <IonIcon name="heart-outline" className="text-base" />
             )}
           </Button>
-          <span className="flex justify-center items-center w-[2.2rem] text-sm font-bold text-red-500 h-[2.2rem] rounded-xl border border-gray-200">
-            {profile?.likes?.length}
+          <span className="flex justify-center items-center w-[2.2rem] shadow-primary text-sm font-bold text-red-500 h-[2.2rem] rounded-xl border border-gray-200">
+            {profile?.likes?.length ? profile?.likes?.length : 0}
           </span>
         </div>
       </div>

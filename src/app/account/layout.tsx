@@ -14,7 +14,7 @@ export default function AccountLayout({
         <BannerProfile />
         <Profile />
         <NavProfile />
-        <div className=" px-4 md:px-0 text-sm -translate-y-[2rem] md:-translate-y-[4rem]">
+        <div className=" px-4 md:px-0 text-sm overflow-x-hidden hidden-scrollbar -translate-y-[2rem] md:-translate-y-[4rem]">
           {children}
         </div>
       </div>

@@ -9,6 +9,7 @@ type Props = Readonly<{
   placeholder?: string;
   className?: string;
   required?: boolean;
+  defaultValue?: string;
 }>;
 
 export default function Input({
@@ -20,6 +21,7 @@ export default function Input({
   placeholder,
   className,
   required,
+  defaultValue,
 }: Props) {
   return (
     <input
@@ -31,6 +33,7 @@ export default function Input({
       type={type}
       placeholder={placeholder}
       required={required}
+      defaultValue={defaultValue}
     />
   );
 }

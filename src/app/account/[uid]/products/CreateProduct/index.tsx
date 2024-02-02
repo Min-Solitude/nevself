@@ -3,7 +3,7 @@
 import Button from "@/components/customs/Button";
 import Input from "@/components/customs/Input";
 import WhileInView from "@/components/motions/WhileInView";
-import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
+import { useAppDispatch } from "@/hooks/useRedux";
 import { createProduct } from "@/store/reducer/product/product.reducer";
 import IonIcon from "@reacticons/ionicons";
 import Image from "next/image";
@@ -35,8 +35,8 @@ export default function CreateProduct({ uid, close }: Props) {
     close && close();
   };
   return (
-    <WhileInView className="w-full mt-4 p-4 rounded-xl flex flex-col gap-4 border border-gray-200 bg-white shadow-primary">
-      <h1 className="font-bold text-lg text-gray-800">Tạo sản phẩm</h1>
+    <WhileInView className="w-full mt-4 p-4 rounded-xl flex flex-col gap-4 border max-w-[40rem]  m-auto border-gray-200 bg-white shadow-primary">
+      <h1 className="font-bold text-lg text-gray-800">Đăng sản phẩm</h1>
       <input
         type="file"
         accept="image/*"
@@ -51,7 +51,7 @@ export default function CreateProduct({ uid, close }: Props) {
       />
       <label
         htmlFor="imageProduct"
-        className="h-[20vh] flex justify-center items-center bg-gray-100 rounded-lg"
+        className="h-[20vh] md:h-[30vh] flex justify-center items-center bg-gray-100 rounded-lg"
       >
         {isImageProduct ? (
           <Image
@@ -116,11 +116,11 @@ export default function CreateProduct({ uid, close }: Props) {
             name="descriptionProduct"
             id="descriptionProduct"
             required
-            className="py-2 px-4 rounded-lg border h-[15vh] outline-none border-gray-200 bg-gray-100"
+            className="py-2 px-4 rounded-lg border h-[15vh] md:h-[25vh] outline-none border-gray-200 bg-gray-100"
           />
         </div>
         <Button kind="primary-dark" className="w-full mt-4" type="submit">
-          <span className="font-medium">Tạo sản phẩm</span>
+          <span className="font-medium">Đăng sản phẩm</span>
         </Button>
       </form>
     </WhileInView>

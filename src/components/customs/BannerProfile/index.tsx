@@ -13,6 +13,7 @@ import {
 } from "@/store/reducer/auth/auth.reducer";
 import { toast } from "react-toastify";
 import Loading from "@/components/shared/Loading";
+import { IMAGES } from "@/assets/imgs";
 
 export default function BannerProfile() {
   const account = useAppSelector((state) => state.auth.account);
@@ -95,7 +96,7 @@ export default function BannerProfile() {
                     src={
                       isBannerUrl
                         ? URL.createObjectURL(isBannerUrl)
-                        : "https://i.pinimg.com/736x/8c/41/43/8c4143462a98f8ceb1996748c9b83dfc.jpg"
+                        : IMAGES.banner
                     }
                     alt="avatar"
                     width={1440}
@@ -123,11 +124,7 @@ export default function BannerProfile() {
       )}
       <div className=" relative md:h-[20rem] h-[14rem] rounded-b-2xl md:rounded-2xl overflow-hidden">
         <Image
-          src={
-            profile?.banner
-              ? profile?.banner
-              : "https://i.pinimg.com/736x/8c/41/43/8c4143462a98f8ceb1996748c9b83dfc.jpg"
-          }
+          src={profile?.banner ? profile?.banner : IMAGES.banner}
           className="w-full h-full object-cover"
           width={1440}
           height={400}

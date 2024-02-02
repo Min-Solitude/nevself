@@ -1,6 +1,7 @@
 export type ProductState = {
     loading: boolean;
     products: Product[] | null;
+    product: Product | null;
 }
 
 export type Product = {
@@ -11,4 +12,7 @@ export type Product = {
         link: string,
         uid_creator: string,
         createdAt: number,
+        uuid: string,
+        updatedAt?: number,
+        likes?: string[],
 }

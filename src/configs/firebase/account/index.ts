@@ -117,6 +117,7 @@ export async function likeProfile(uid_likes: any, uid_profile: any) {
     const userDocRef = doc(db, "users", uid_profile);
     const docSnap = await getDoc(userDocRef);
 
+
     if (docSnap.exists()) {
       // add uid_likes to likes
       const likes = docSnap.data()?.likes;
@@ -131,8 +132,24 @@ export async function likeProfile(uid_likes: any, uid_profile: any) {
         });
       }
 
+      // add notification
+      const timeLike = new Date().getTime();
+      const notification = docSnap.data()?.notification;
+
+      if (notification) {
+        await updateDoc(userDocRef, {
+          notification: [...notification, {uid: uid_likes, time: timeLike, content: "Đã thích hồ sơ của bạn"}],
+        });
+      } else {
+        await updateDoc(userDocRef, {
+          notification: [{uid: uid_likes, time: timeLike,  content: "Đã thích hồ sơ của bạn"}],
+        });
+      }
+      
+
       result = true;
     }
+
   } catch (e) {
     error = e;
   }
@@ -160,6 +177,17 @@ export async function unlikeProfile(uid_likes: any, uid_profile: any) {
         });
       }
 
+      // remove notification
+      const notification = docSnap.data()?.notification;
+
+      if (notification) {
+        const newNotification = notification.filter((item: any) => item.uid !== uid_likes);
+
+        await updateDoc(userDocRef, {
+          notification: newNotification,
+        });
+      }
+
       result = true;
     }
   } catch (e) {
@@ -180,6 +208,68 @@ export async function createProfile(uid: any, kindProfile: any) {
     if (docSnap.exists()) {
       await updateDoc(userDocRef, {
         kindProfile: kindProfile,
+      });
+
+      result = true;
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+export async function getNotification(uid: any) {
+  let result = null;
+  let error = null;
+
+  try {
+    const userDocRef = doc(db, "users", uid);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      const notice = docSnap.data()?.notification;
+
+      if(notice){
+        const data = [];
+
+        for (let d of notice) {
+          const userDocRef = doc(db, "users", d.uid);
+          const docSnap = await getDoc(userDocRef);
+          if (docSnap.exists()) {
+            const user = docSnap.data();
+            data.push({
+              uid: d.uid,
+              time: d.time,
+              content: d.content,
+              avatar: user?.avatar,
+              displayName: user?.displayName,
+            });
+          }
+        }
+
+        result = data;
+      }
+
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+export async function deleteNotification(uid: any) {
+  let result = null;
+  let error = null;
+
+  try {
+    const userDocRef = doc(db, "users", uid);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      await updateDoc(userDocRef, {
+        notification: [],
       });
 
       result = true;
