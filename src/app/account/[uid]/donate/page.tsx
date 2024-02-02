@@ -5,6 +5,7 @@ import WhileInView from "@/components/motions/WhileInView";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import { getProfileAccount } from "@/store/reducer/auth/auth.reducer";
 import React, { useEffect } from "react";
+import CreateDonate from "./components/CreateDonate";
 
 export default function DonatePage({
   params,
@@ -28,7 +29,9 @@ export default function DonatePage({
 
   return (
     <WhileInView className="w-full rounded-2xl border border-gray-200 shadow-primary flex justify-center items-center p-4 min-h-[30vh]">
-      {account?.uid === params.uid ? (
+      {isCreateDonate ? (
+        <CreateDonate />
+      ) : account?.uid === params.uid ? (
         <div>
           {profile?.role === "admin" || profile?.role === "vip" ? (
             <div>
@@ -36,7 +39,11 @@ export default function DonatePage({
                 <div>Donate của người dùng này</div>
               ) : (
                 <div className="w-full flex gap-2 flex-col px-3 md:px-0 items-center">
-                  <Button kind="primary" className="font-medium px-4">
+                  <Button
+                    kind="primary"
+                    className="font-medium px-4"
+                    onClick={() => setIsCreateDonate(true)}
+                  >
                     Tạo donate
                   </Button>
                   <i className="text-center text-gray-500">

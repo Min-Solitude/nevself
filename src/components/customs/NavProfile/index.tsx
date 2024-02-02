@@ -10,6 +10,7 @@ import { getProfileAccount } from "@/store/reducer/auth/auth.reducer";
 export default function NavProfile() {
   const params = useParams<{ uid: string }>();
   const profile = useAppSelector((state) => state.auth.profile);
+  const account = useAppSelector((state) => state.auth.account);
   const dispatch = useAppDispatch();
 
   const router = usePathname();
@@ -61,7 +62,7 @@ export default function NavProfile() {
           Đánh giá
         </Button>
       </Link>
-      {profile?.role === "vip" && (
+      {profile?.role === "vip" && account?.uid === profile.uid && (
         <Link
           href={`/account/${params.uid}/donate`}
           className={` duration-150 `}
