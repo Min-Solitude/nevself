@@ -1,7 +1,10 @@
+import { User } from "../auth/auth.type";
+
 export type ProductState = {
     loading: boolean;
     products: Product[] | null;
     product: Product | null;
+    author: User | null;
 }
 
 export type Product = {

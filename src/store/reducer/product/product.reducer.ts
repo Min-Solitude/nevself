@@ -2,11 +2,14 @@ import { createProductAccount, deleteProductByUuid, getProductsAccount, getProdu
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
 import { ProductState } from "./product.type";
+import { getAccountByUid } from "@/configs/firebase/auth";
+import { User } from "../auth/auth.type";
 
 const initialState: ProductState = {
     loading: false,
     products: null,
     product: null,
+    author: null,
 };
 
 export const getProducts = createAsyncThunk(
@@ -100,6 +103,17 @@ export const unlikeProduct = createAsyncThunk(
         const getProductsResult = await unlikeProductAccount(payload.uid_liker, payload.uuid_product, payload.uid_creator);
         
         return getProductsResult.result
+    },
+);
+
+export const getAuthor = createAsyncThunk(
+    'product/getAuthor',
+    async (payload: {
+        uid: string;
+    },) => {
+        const getProductsResult = await getAccountByUid(payload.uid);
+        
+        return getProductsResult?.result as User;
     },
 );
 
@@ -246,6 +260,14 @@ const reducer = createSlice({
             toast.error("Bỏ thích sản phẩm thất bại");
         }
         );
+
+        builder.addCase(getAuthor.fulfilled, (state, action) => {
+            if(action.payload){
+                state.author = action.payload;
+            }else{
+                state.author = null;
+            }
+        })
     },
 });
 

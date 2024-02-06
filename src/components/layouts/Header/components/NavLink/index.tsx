@@ -36,6 +36,8 @@ export default function Navlink() {
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => state.auth.account);
 
+  console.log("account", account);
+
   return (
     <nav className=" flex items-center gap-4 md:gap-8 justify-end">
       <ul className="hidden md:flex items-center gap-8">
@@ -56,7 +58,7 @@ export default function Navlink() {
         />
       </ul>
 
-      {account ? (
+      {account?.uid && account?.uid.length > 0 ? (
         <Account account={account} />
       ) : (
         <Link href={"/login"} className="flex justify-center items-center">
@@ -104,7 +106,7 @@ export default function Navlink() {
                 </li>
               )}
             />
-            {account && (
+            {account?.uid && account?.uid.length > 0 && (
               <li className="w-full flex justify-center md:hidden">
                 <Link
                   href={`/login`}

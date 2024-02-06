@@ -247,7 +247,7 @@ export async function likeProductProfile(uid_liker: any, uuid_product: any, uid_
 
         notifications.push({
             uid: uid_liker,
-            content: `Đã thì sản phẩm ${name} của bạn`,
+            content: `Đã thích sản phẩm ${name} của bạn`,
             time: timeLike
         });
 

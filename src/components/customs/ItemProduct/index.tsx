@@ -9,9 +9,10 @@ import {
 } from "@/store/reducer/product/product.reducer";
 import IonIcon from "@reacticons/ionicons";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
-import Button from "../Button";
 import { toast } from "react-toastify";
+import Button from "../Button";
 
 type Props = {
   name: string;
@@ -173,9 +174,11 @@ export default function ItemProduct({
         </div>
         <p className="mt-4 line-clamp-2 text-gray-700">{description}</p>
         <div className="w-full mt-4 mb-2 flex justify-end">
-          <Button kind="primary" className="font-medium text-sm px-4">
-            Xem chi tiết
-          </Button>
+          <Link href={`/account/${uid_creator}/products/${uuid_product}`}>
+            <Button kind="primary" className="font-medium text-sm px-4">
+              Xem chi tiết
+            </Button>
+          </Link>
         </div>
       </div>
     </WhileInView>

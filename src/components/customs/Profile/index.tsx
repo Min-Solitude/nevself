@@ -14,6 +14,7 @@ import UpdateInfo from "./UpdateInfo";
 import { Each } from "@/helper/Each";
 import Notification from "./Notification";
 import { IMAGES } from "@/assets/imgs";
+import { toast } from "react-toastify";
 
 export default function Profile() {
   const account = useAppSelector((state) => state.auth.account);
@@ -150,6 +151,8 @@ export default function Profile() {
                 } else {
                   dispatch(likeProfileAccount(payload));
                 }
+              } else {
+                toast.error("Vui lòng đăng nhập để có thể thích");
               }
             }}
           >

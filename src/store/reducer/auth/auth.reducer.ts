@@ -145,10 +145,7 @@ export const updateInfoAccount = createAsyncThunk(
                 tags: payload.tags,
             },
             payload.uid
-        )
-
-        console.log(updateInfoResult?.result);
-        
+        )        
 
         return updateInfoResult?.result;
     })

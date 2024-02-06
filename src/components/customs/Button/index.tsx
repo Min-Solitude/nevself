@@ -10,6 +10,7 @@ type ButtonProps = {
   kind?:
     | "primary"
     | "primary-dark"
+    | "primary-dark-full"
     | "secondary"
     | "danger"
     | "warning"
@@ -37,6 +38,9 @@ export default function Button({
 
   if (kind === "primary-dark")
     kindClass = "bg-black shadow-primary text-white p-2 rounded-xl";
+
+  if (kind === "primary-dark-full")
+    kindClass = "bg-black shadow-primary text-white p-2 rounded-full";
 
   return (
     <motion.button
