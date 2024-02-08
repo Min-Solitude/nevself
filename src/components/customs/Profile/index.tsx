@@ -15,10 +15,12 @@ import { Each } from "@/helper/Each";
 import Notification from "./Notification";
 import { IMAGES } from "@/assets/imgs";
 import { toast } from "react-toastify";
+import Spiner from "../Spiner";
 
 export default function Profile() {
   const account = useAppSelector((state) => state.auth.account);
   const profile = useAppSelector((state) => state.auth.profile);
+  const loading = useAppSelector((state) => state.auth.loading);
 
   const [isUpdateInfo, setIsUpdateInfo] = React.useState(false);
   const [isShowNotification, setIsShowNotification] = React.useState(false);
@@ -40,7 +42,11 @@ export default function Profile() {
         />
       )}
       <div className=" -translate-y-[4rem] md:-translate-y-[6rem]  flex flex-col items-center relative gap-2">
-        <div className="  w-[6rem] h-[6rem] relative md:w-[7rem] md:h-[7rem] shadow-primary border-2  border-white  z-10 rounded-full">
+        <div
+          className={` w-[6rem] h-[6rem] relative md:w-[7rem] md:h-[7rem] shadow-primary border-2  z-10 rounded-full ${
+            profile?.role === "vip" ? "border-blue-500" : "border-white"
+          }`}
+        >
           <input
             type="file"
             accept="image/*"
@@ -87,11 +93,18 @@ export default function Profile() {
           </Button>
         )}
         <div className="flex flex-col items-center ">
-          <h1 className="font-semibold text-lg">
-            {profile?.displayName ? profile?.displayName : "Anonymous"}{" "}
+          <h1 className="font-semibold text-lg flex items-center">
+            <span>
+              {profile?.displayName ? profile?.displayName : "Anonymous"}{" "}
+            </span>
             <span className="text-sm text-gray-700 font-medium">
-              (#{profile?.username})
+              (#{profile?.username}){" "}
             </span>{" "}
+            {profile?.role === "vip" && (
+              <span className="flex justify-center items-center ml-2">
+                <IonIcon name="checkmark-circle" className="text-blue-500" />
+              </span>
+            )}
           </h1>
           {profile?.tags && profile?.tags?.length > 0 && (
             <div className="text-gray-600 mt-2 flex gap-3 text-sm">
@@ -133,35 +146,44 @@ export default function Profile() {
               <IonIcon name="notifications" className="text-base " />
             </Button>
           )}
-          <Button
-            className={`text-sm font-medium border border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary  ${
-              profile?.likes?.find((item) => item === account?.uid)
-                ? "bg-red-500 text-white"
-                : "bg-white text-red-500"
-            }`}
-            onClick={() => {
-              const payload = {
-                uid_like: account?.uid,
-                uid_profile: profile?.uid,
-              };
+          {loading ? (
+            <Button
+              className="text-sm font-medium border border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary bg-white"
+              disabled
+            >
+              <Spiner />
+            </Button>
+          ) : (
+            <Button
+              className={`text-sm font-medium border border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary  ${
+                profile?.likes?.find((item) => item === account?.uid)
+                  ? "bg-red-500 text-white"
+                  : "bg-white text-red-500"
+              }`}
+              onClick={() => {
+                const payload = {
+                  uid_like: account?.uid,
+                  uid_profile: profile?.uid,
+                };
 
-              if (account?.uid && profile?.uid) {
-                if (profile?.likes?.find((item) => item === account?.uid)) {
-                  dispatch(removeLikeProfileAccount(payload));
+                if (account?.uid && profile?.uid) {
+                  if (profile?.likes?.find((item) => item === account?.uid)) {
+                    dispatch(removeLikeProfileAccount(payload));
+                  } else {
+                    dispatch(likeProfileAccount(payload));
+                  }
                 } else {
-                  dispatch(likeProfileAccount(payload));
+                  toast.error("Vui lòng đăng nhập để có thể thích");
                 }
-              } else {
-                toast.error("Vui lòng đăng nhập để có thể thích");
-              }
-            }}
-          >
-            {profile?.likes?.find((item) => item === account?.uid) ? (
-              <IonIcon name="heart" className="text-base" />
-            ) : (
-              <IonIcon name="heart-outline" className="text-base" />
-            )}
-          </Button>
+              }}
+            >
+              {profile?.likes?.find((item) => item === account?.uid) ? (
+                <IonIcon name="heart" className="text-base" />
+              ) : (
+                <IonIcon name="heart-outline" className="text-base" />
+              )}
+            </Button>
+          )}
           <span className="flex justify-center items-center w-[2.2rem] shadow-primary text-sm font-bold text-red-500 h-[2.2rem] rounded-xl border border-gray-200">
             {profile?.likes?.length ? profile?.likes?.length : 0}
           </span>

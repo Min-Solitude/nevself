@@ -11,6 +11,7 @@ import Logo from "../Logo";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import Account from "../Account";
 import { AuthAction } from "@/store/reducer/auth/auth.reducer";
+import { ProductAction } from "@/store/reducer/product/product.reducer";
 
 const dataNavlink = [
   {
@@ -35,8 +36,6 @@ export default function Navlink() {
 
   const dispatch = useAppDispatch();
   const account = useAppSelector((state) => state.auth.account);
-
-  console.log("account", account);
 
   return (
     <nav className=" flex items-center gap-4 md:gap-8 justify-end">
@@ -113,6 +112,7 @@ export default function Navlink() {
                   className="w-full text-center bg-black  duration-150 active:scale-95 cursor-pointer border border-gray-200 flex justify-center items-center py-2 rounded-xl"
                   onClick={() => {
                     dispatch(AuthAction.logout());
+                    dispatch(ProductAction.logout());
                   }}
                 >
                   <span className="font-medium text-sm text-white">

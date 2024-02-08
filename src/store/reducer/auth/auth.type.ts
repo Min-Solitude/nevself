@@ -22,6 +22,7 @@ export type User = {
     kindProfile?: string | null;
     notifications?: Notification[];
     donate?: Donate;
+    networks?: NetWork[];
 }
 
 export type HagTag = {
@@ -38,6 +39,18 @@ export type Notification = {
 
 export type Donate = {
     title: string;
-    QrCode: string;
     description: string;
+    imageQr: string;
+    status: string;
+    createdAt?: any;
+    updatedAt?: any;
+}
+
+export type NetWork = {
+    uid_creator: string;
+    label: string;
+    link: string;
+    createdAt?: any;
+    updatedAt?: any;
+    uuid: string;
 }

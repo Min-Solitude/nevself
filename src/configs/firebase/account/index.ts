@@ -6,6 +6,7 @@ import {
 } from "firebase/storage";
 import { db, storages } from "..";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { v4 as uuidv4 } from "uuid";
 
 export async function updateBanner(banner: any, uid: any) {
   let result = null;
@@ -308,6 +309,135 @@ export async function createDonate(uid_profile: any, title: string,description: 
         status: "active",
         createdAt: createdAt
       };
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+
+
+export async function updateDonate(uid_profile: any, old_image: any, title: string,description: string, imageQr: any, status: boolean, createdAt: any) {
+  let result = null;
+  let error = null;
+
+  try {
+   if(imageQr){
+    const storageRef = ref(storages, `donate/${uid_profile}/${imageQr.name}`);
+    await uploadBytes(storageRef, imageQr, {});
+    const downloadURL = await getDownloadURL(storageRef);
+
+    const userDocRef = doc(db, "users", uid_profile);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+
+      // delete old imageQr
+      const oldImageQr = docSnap.data()?.donate?.imageQr;
+      if (oldImageQr) {
+        const oldImageQrRef = ref(storages, oldImageQr);
+        await deleteObject(oldImageQrRef);
+      }
+
+      const UpdatedAt = new Date().getTime();
+
+      // Keep stable createdAt
+      
+      await updateDoc(userDocRef, {
+        donate: {title: title, description: description, imageQr: downloadURL, status: status, updatedAt: UpdatedAt, createdAt: createdAt},
+      })
+
+      result = {
+        title: title,
+        description: description,
+        imageQr: downloadURL,
+        status: status,
+        updatedAt: UpdatedAt
+      };
+    }
+   } else {
+    const userDocRef = doc(db, "users", uid_profile);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+
+      const UpdatedAt = new Date().getTime();
+      
+      await updateDoc(userDocRef, {
+        donate: {title: title, description: description, status: status, updatedAt: UpdatedAt,  createdAt: createdAt , imageQr: old_image},
+      })
+
+      result = {
+        title: title,
+        description: description,
+        status: status,
+        updatedAt: UpdatedAt,
+        createdAt: createdAt,
+        imageQr: old_image
+      };
+    }
+   }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+export async function addNetwork(uid: any, label: any, link: any) {
+  let result = null;
+  let error = null;
+
+  try {
+    const userDocRef = doc(db, "users", uid);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      const networks = docSnap.data()?.networks;
+
+      const createdAt = new Date().getTime();
+
+      if (networks) {
+        await updateDoc(userDocRef, {
+          networks: [...networks, {uid_creator: uid, label: label, link: link, createdAt: createdAt , uuid: uuidv4()}],
+        });
+      } else {
+        await updateDoc(userDocRef, {
+          networks: [{uid_creator: uid, label: label, link: link, createdAt: createdAt , uuid: uuidv4()}],
+        });
+      }
+
+      result = {uid_creator: uid, label: label, link: link, createdAt: createdAt , uuid: uuidv4()};
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+export async function deleteNetwork(uid: any, uuid: any) {
+  let result = null;
+  let error = null;
+
+  try {
+    const userDocRef = doc(db, "users", uid);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      const networks = docSnap.data()?.networks;
+
+      if (networks) {
+        const newNetworks = networks.filter((item: any) => item.uuid !== uuid);
+
+        await updateDoc(userDocRef, {
+          networks: newNetworks,
+        });
+      }
+
+      result = true;
     }
   } catch (e) {
     error = e;

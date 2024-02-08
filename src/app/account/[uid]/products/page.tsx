@@ -92,7 +92,7 @@ export default function AccountProductPage() {
                       />
                     }
                   </div>
-                ) : products ? (
+                ) : products && products.length > 0 ? (
                   <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-8 gap-4">
                     <Each
                       of={products}
@@ -118,7 +118,9 @@ export default function AccountProductPage() {
                     />
                   </div>
                 ) : (
-                  <div>Chưa có sản phẩm nào</div>
+                  <div className="w-full h-[20vh] rounded-xl bg-gray-100 border border-gray-200 flex justify-center items-center font-semibold text-gray-700 text-lg">
+                    Chưa có sản phẩm nào
+                  </div>
                 )}
               </div>
             )}

@@ -125,6 +125,7 @@ const reducer = createSlice({
             state.loading = false;
             state.products = null;
             state.product = null;
+            state.author = null;
         }
     },
     extraReducers: (builder) => {
