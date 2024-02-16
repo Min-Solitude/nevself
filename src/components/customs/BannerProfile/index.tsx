@@ -19,7 +19,7 @@ export default function BannerProfile() {
   const account = useAppSelector((state) => state.auth.account);
   const profile = useAppSelector((state) => state.auth.profile);
 
-  const params = useParams<{ uid: string }>();
+  const param = useParams<{ uid: string }>();
   const dispatch = useAppDispatch();
   const loading = useAppSelector((state) => state.auth.loading);
 
@@ -46,7 +46,7 @@ export default function BannerProfile() {
   };
 
   useEffect(() => {
-    dispatch(getProfileAccount({ uid: params.uid }));
+    dispatch(getProfileAccount({ uid: param.uid }));
   }, []);
 
   return (

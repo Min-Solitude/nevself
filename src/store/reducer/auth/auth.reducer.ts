@@ -13,6 +13,7 @@ import { deleteCookie, setCookie } from "cookies-next";
 import {
   addNetwork,
   createDonate,
+  createInformation,
   createProfile,
   deleteNetwork,
   deleteNotification,
@@ -23,6 +24,8 @@ import {
   updateBanner,
   updateDonate,
   updateInfo,
+  updateInformation,
+  watchNotice,
 } from "@/configs/firebase/account";
 import { ProductAction } from "../product/product.reducer";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -347,6 +350,72 @@ export const updateDonateProfile = createAsyncThunk(
       }
     );
 
+    export const createInfoProfile = createAsyncThunk(
+      "auth/createInfoProfile",
+      async (payload: {
+        uid_profile: any;
+        data: {
+          story: string;
+          skills: string[];
+          info: {
+            location: string;
+            mail: string;
+            joinAt: string;
+          };
+        }
+      }) => {
+       
+        const createInfoProfileResult = await createInformation(
+          payload.uid_profile,
+          payload.data
+        )
+
+        return createInfoProfileResult?.result;
+      }
+    );
+
+    export const updateInfoProfile = createAsyncThunk(
+      "auth/updateInfoProfile",
+      async (payload: {
+        uid_profile: any;
+        data: {
+          story: string;
+          skills: string[];
+          info: {
+            location: string;
+            mail: string;
+            joinAt: string;
+          };
+        }
+      }) => {
+       
+        const createInfoProfileResult = await updateInformation(
+          payload.uid_profile,
+          payload.data
+        )
+
+        return createInfoProfileResult?.result;
+      }
+    );
+
+    export const watchNoticeAccount = createAsyncThunk(
+      "auth/watchNotice",
+      async (payload: {
+        uid: any;
+        uuid: any;
+      }) => {
+        const watchNoticeResult = await watchNotice(
+          payload.uid,
+          payload.uuid
+        );        
+
+        return {
+          result: watchNoticeResult?.result,
+          uuid: payload.uuid
+        };
+      }
+    )
+
 const reducer = createSlice({
   name: "auth",
   initialState,
@@ -658,6 +727,59 @@ const reducer = createSlice({
       }
     });
     builder.addCase(deleteNetworkProfile.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(createInfoProfile.rejected, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(createInfoProfile.fulfilled, (state, action: any) => {
+      state.loading = false;
+      if (state.profile && state.account) {
+        toast.success("Tạo thông tin thành công");
+        state.profile.information = action.payload;
+      }
+    });
+    builder.addCase(createInfoProfile.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(updateInfoProfile.rejected, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(updateInfoProfile.fulfilled, (state, action: any) => {
+      state.loading = false;
+      if (state.profile && state.account) {
+        toast.success("Cập nhật thông tin thành công");
+        state.profile.information = action.payload;
+      }
+    });
+    builder.addCase(updateInfoProfile.pending, (state) => {
+      state.loading = true;
+    });
+
+    builder.addCase(watchNoticeAccount.rejected, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(watchNoticeAccount.fulfilled, (state, action: any) => {
+      state.loading = false;
+      if (state.profile && state.account) {
+        state.profile.notifications = state.profile.notifications?.map(item => {
+          if(item.uuid === action.payload.uuid){
+            item.status = "read";
+          }
+          return item;
+        })
+
+        state.account.notifications = state.account.notifications?.map(item => {
+          if(item.uuid === action.payload.uuid){
+            item.status = "read";
+          }
+          return item;
+        })
+      }
+    });
+    builder.addCase(watchNoticeAccount.pending, (state) => {
       state.loading = true;
     });
   },

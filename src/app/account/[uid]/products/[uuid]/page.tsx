@@ -42,23 +42,6 @@ export default function DetailProduct({
         <h1 className="font-bold text-xl text-gray-700 flex items-center">
           {product?.name ? product?.name : "---------"}
         </h1>
-        <Button
-          kind="primary"
-          onClick={() => setIsShowPopupProduct(!isShowPopupProduct)}
-          className="relative"
-        >
-          <IonIcon
-            name="ellipsis-horizontal"
-            className="text-gray-700 text-xl"
-          />
-          {isShowPopupProduct && (
-            <WhileInView className="absolute p-2 bg-white rounded-lg border border-gray-200 shadow-primary w-[12rem] right-0 top-14">
-              <Button kind="primary" className="w-full font-medium">
-                Báo cáo
-              </Button>
-            </WhileInView>
-          )}
-        </Button>
       </div>
       <div
         className={`w-full rounded-2xl md:h-[50vh] shadow-primary overflow-hidden ${

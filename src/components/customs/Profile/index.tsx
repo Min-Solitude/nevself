@@ -1,5 +1,7 @@
 "use client";
 
+import { IMAGES } from "@/assets/imgs";
+import { Each } from "@/helper/Each";
 import { useAppDispatch, useAppSelector } from "@/hooks/useRedux";
 import {
   likeProfileAccount,
@@ -9,13 +11,10 @@ import {
 import IonIcon from "@reacticons/ionicons";
 import Image from "next/image";
 import React from "react";
-import Button from "../Button";
-import UpdateInfo from "./UpdateInfo";
-import { Each } from "@/helper/Each";
-import Notification from "./Notification";
-import { IMAGES } from "@/assets/imgs";
 import { toast } from "react-toastify";
-import Spiner from "../Spiner";
+import Button from "../Button";
+import Notification from "./Notification";
+import UpdateInfo from "./UpdateInfo";
 
 export default function Profile() {
   const account = useAppSelector((state) => state.auth.account);
@@ -28,6 +27,10 @@ export default function Profile() {
   const [isAvatarUrl, setIsAvatarUrl] = React.useState<any>(null);
 
   const dispatch = useAppDispatch();
+
+  const unreadNotifications = profile?.notifications?.filter(
+    (item) => item.status === "unread"
+  );
 
   return (
     <>
@@ -140,27 +143,34 @@ export default function Profile() {
           )}
           {account?.uid === profile?.uid && (
             <Button
-              className="text-sm font-medium border border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary "
+              className="text-sm font-medium border relative border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary "
               onClick={() => setIsShowNotification(true)}
             >
-              <IonIcon name="notifications" className="text-base " />
+              {/* Check notification unread */}
+
+              {(unreadNotifications as any)?.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-medium px-1 rounded-full">
+                  {unreadNotifications?.length}
+                </span>
+              )}
+
+              <IonIcon
+                name="notifications"
+                className={`text-base ${
+                  (unreadNotifications as any)?.length > 0 && "text-red-500"
+                }`}
+              />
             </Button>
           )}
-          {loading ? (
-            <Button
-              className="text-sm font-medium border border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary bg-white"
-              disabled
-            >
-              <Spiner />
-            </Button>
-          ) : (
-            <Button
-              className={`text-sm font-medium border border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary  ${
-                profile?.likes?.find((item) => item === account?.uid)
-                  ? "bg-red-500 text-white"
-                  : "bg-white text-red-500"
-              }`}
-              onClick={() => {
+
+          <Button
+            className={`text-sm font-medium border border-gray-200 w-[2.2rem] h-[2.2rem] rounded-xl shadow-primary  ${
+              profile?.likes?.find((item) => item === account?.uid)
+                ? "bg-red-500 text-white"
+                : "bg-white text-red-500"
+            }`}
+            onClick={() => {
+              if (!loading) {
                 const payload = {
                   uid_like: account?.uid,
                   uid_profile: profile?.uid,
@@ -175,15 +185,15 @@ export default function Profile() {
                 } else {
                   toast.error("Vui lòng đăng nhập để có thể thích");
                 }
-              }}
-            >
-              {profile?.likes?.find((item) => item === account?.uid) ? (
-                <IonIcon name="heart" className="text-base" />
-              ) : (
-                <IonIcon name="heart-outline" className="text-base" />
-              )}
-            </Button>
-          )}
+              }
+            }}
+          >
+            {profile?.likes?.find((item) => item === account?.uid) ? (
+              <IonIcon name="heart" className="text-base" />
+            ) : (
+              <IonIcon name="heart-outline" className="text-base" />
+            )}
+          </Button>
           <span className="flex justify-center items-center w-[2.2rem] shadow-primary text-sm font-bold text-red-500 h-[2.2rem] rounded-xl border border-gray-200">
             {profile?.likes?.length ? profile?.likes?.length : 0}
           </span>

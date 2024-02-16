@@ -51,7 +51,13 @@ export default function Notification({ uid_account, profile, close }: Props) {
           <div className="w-full flex flex-col h-[90vh] overflow-y-scroll hidden-scrollbar gap-4">
             <Each
               of={profile?.notifications}
-              render={(item, index) => <ItemNotice notice={item} />}
+              render={(item, index) => (
+                <ItemNotice
+                  notice={item}
+                  closeNotice={close}
+                  uid_account={uid_account}
+                />
+              )}
             />
             {profile?.notifications?.length === 0 ? (
               <div className="text-center text-gray-500 mt-4">

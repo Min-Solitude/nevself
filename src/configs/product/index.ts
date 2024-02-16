@@ -243,16 +243,18 @@ export async function likeProductProfile(uid_liker: any, uuid_product: any, uid_
 
         // add notification
         const timeLike = new Date().getTime();
-        const notifications = docSnapUser.data()?.notification || [];
+        const notifications = docSnapUser.data()?.notifications || [];
 
         notifications.push({
             uid: uid_liker,
             content: `Đã thích sản phẩm ${name} của bạn`,
-            time: timeLike
+            time: timeLike,
+            status: "unread",
+            uuid: uuidv4()
         });
 
         await updateDoc(userDocRef, {
-            notification: notifications,
+            notifications: notifications,
           });
 
         result = newProducts;

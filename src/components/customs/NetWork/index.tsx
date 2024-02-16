@@ -50,18 +50,25 @@ export default function NetWork() {
                   >
                     <IonIcon name="add" className="text-xl text-gray-800" />
                   </Button>
-                  <Button kind="primary" onClick={() => setIsDelete(true)}>
-                    <IonIcon
-                      name="pencil-outline"
-                      className="text-xl text-gray-800"
-                    />
+                  <Button kind="primary" onClick={() => setIsDelete(!isDelete)}>
+                    {isDelete ? (
+                      <IonIcon
+                        name="close-outline"
+                        className="text-xl text-gray-800"
+                      />
+                    ) : (
+                      <IonIcon
+                        name="pencil-outline"
+                        className="text-xl text-gray-800"
+                      />
+                    )}
                   </Button>
                 </div>
               )}
           </div>
           <div className=" mt-2 w-full">
             {profile?.networks && profile?.networks.length > 0 ? (
-              <div className="w-full flex items-center justify-center md:text-start gap-4 ">
+              <div className="w-full flex items-center justify-center md:justify-start gap-4 ">
                 <Each
                   of={profile?.networks}
                   render={(item, index) => (
@@ -117,12 +124,15 @@ export default function NetWork() {
               </div>
             )}
           </div>
+          <div className=" mt-4 flex justify-center">
+            <IonIcon name="caret-down" className="text-2xl text-gray-600" />
+          </div>
         </div>
       ) : (
         profile?.networks &&
         profile?.networks.length > 0 && (
           <div className="-translate-y-[2rem] text-sm md:-translate-y-[5rem] flex-col bg-white   flex  gap-4 w-full py-4 md:py-8 px-4 md:px-0">
-            <div className="w-full items-center flex justify-between">
+            <div className="w-full items-center flex justify-center md:justify-start">
               <h1 className="font-bold text-gray-700 uppercase">
                 Nền tảng mạng xã hội
               </h1>
@@ -149,6 +159,9 @@ export default function NetWork() {
                   )}
                 />
               </div>
+            </div>
+            <div className=" mt-4 flex justify-center">
+              <IonIcon name="caret-down" className="text-2xl text-gray-600" />
             </div>
           </div>
         )

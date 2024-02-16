@@ -23,6 +23,17 @@ export type User = {
     notifications?: Notification[];
     donate?: Donate;
     networks?: NetWork[];
+    information?: Information;
+}
+
+export type Information = {
+    story: string;
+    skills: string[];
+    info: {
+        location: string;
+        mail: string;
+        joinAt: string;
+    }
 }
 
 export type HagTag = {
@@ -35,6 +46,8 @@ export type Notification = {
     displayName: string;
     avatar: string;
     content: string;
+    status: string;
+    uuid: string;
 }
 
 export type Donate = {

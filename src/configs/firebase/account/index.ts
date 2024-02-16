@@ -7,6 +7,7 @@ import {
 import { db, storages } from "..";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
+import { Information } from "@/store/reducer/auth/auth.type";
 
 export async function updateBanner(banner: any, uid: any) {
   let result = null;
@@ -135,15 +136,15 @@ export async function likeProfile(uid_likes: any, uid_profile: any) {
 
       // add notification
       const timeLike = new Date().getTime();
-      const notification = docSnap.data()?.notification;
+      const notification = docSnap.data()?.notifications;
 
       if (notification) {
         await updateDoc(userDocRef, {
-          notification: [...notification, {uid: uid_likes, time: timeLike, content: "Đã thích hồ sơ của bạn"}],
+          notifications: [...notification, {uid: uid_likes, time: timeLike, content: "Đã thích hồ sơ của bạn", status: 'unread', uuid: uuidv4()}],
         });
       } else {
         await updateDoc(userDocRef, {
-          notification: [{uid: uid_likes, time: timeLike,  content: "Đã thích hồ sơ của bạn"}],
+          notifications: [{uid: uid_likes, time: timeLike,  content: "Đã thích hồ sơ của bạn", status: 'unread', uuid: uuidv4()}],
         });
       }
       
@@ -179,13 +180,13 @@ export async function unlikeProfile(uid_likes: any, uid_profile: any) {
       }
 
       // remove notification
-      const notification = docSnap.data()?.notification;
+      const notification = docSnap.data()?.notifications;
 
       if (notification) {
         const newNotification = notification.filter((item: any) => item.uid !== uid_likes);
 
         await updateDoc(userDocRef, {
-          notification: newNotification,
+          notifications: newNotification,
         });
       }
 
@@ -229,7 +230,7 @@ export async function getNotification(uid: any) {
     const docSnap = await getDoc(userDocRef);
 
     if (docSnap.exists()) {
-      const notice = docSnap.data()?.notification;
+      const notice = docSnap.data()?.notifications;
 
       if(notice){
         const data = [];
@@ -245,6 +246,8 @@ export async function getNotification(uid: any) {
               content: d.content,
               avatar: user?.avatar,
               displayName: user?.displayName,
+              status: d.status,
+              uuid: d.uuid
             });
           }
         }
@@ -270,7 +273,7 @@ export async function deleteNotification(uid: any) {
 
     if (docSnap.exists()) {
       await updateDoc(userDocRef, {
-        notification: [],
+        notifications: [],
       });
 
       result = true;
@@ -280,6 +283,43 @@ export async function deleteNotification(uid: any) {
   }
 
   return { result, error };
+}
+
+export async function watchNotice(uid: any, uid_notice: any) {
+  let result = null;
+  let error = null;
+
+  try {
+    const userDocRef = doc(db, "users", uid);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      const notice = docSnap.data()?.notifications;
+
+      console.log(docSnap.data());
+      
+
+      if (notice) {
+        const newNotice = notice.map((item: any) => {
+          if (item.uuid === uid_notice) {
+            return { ...item, status: "read" };
+          }
+          return item;
+        });
+
+        await updateDoc(userDocRef, {
+          notifications: newNotice,
+        });
+      }
+
+      result = true;
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+
 }
 
 export async function createDonate(uid_profile: any, title: string,description: string, imageQr: any) {
@@ -438,6 +478,50 @@ export async function deleteNetwork(uid: any, uuid: any) {
       }
 
       result = true;
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+export async function createInformation( uid_profile: any, payload: Information) {
+  let result = null;
+  let error = null;
+
+  try {
+    const userDocRef = doc(db, "users", uid_profile);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      await updateDoc(userDocRef, {
+        information: payload,
+      });
+
+      result = payload;
+    }
+  } catch (e) {
+    error = e;
+  }
+
+  return { result, error };
+}
+
+export async function updateInformation( uid_profile: any, payload: Information) {
+  let result = null;
+  let error = null;
+
+  try {
+    const userDocRef = doc(db, "users", uid_profile);
+    const docSnap = await getDoc(userDocRef);
+
+    if (docSnap.exists()) {
+      await updateDoc(userDocRef, {
+        information: payload,
+      });
+
+      result = payload;
     }
   } catch (e) {
     error = e;
